@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  client-service:
+    build: .
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - MONGO_URI=mongodb://mongo:27017/invoicehive_clients
+      - JWT_ACCESS_SECRET=dev_access_secret_change_in_prod
+      - INTERNAL_SECRET=dev_internal_secret_change_in_prod
+      - CLIENT_URL=http://localhost:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: node --watch src/index.js
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27018:27017"   # 27018 on host to avoid clash with auth-service mongo
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  mongo_data:
