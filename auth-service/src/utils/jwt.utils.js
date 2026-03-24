@@ -1,16 +1,24 @@
 import jwt from "jsonwebtoken";
+import fs from "fs";
+import path from "path";
 import redis from "../config/redis.js";
-import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_ACCESS_EXPIRES_IN, JWT_REFRESH_EXPIRES_IN, NODE_ENV } from "../config/env.js";
+import { JWT_REFRESH_SECRET, JWT_ACCESS_EXPIRES_IN, JWT_REFRESH_EXPIRES_IN, NODE_ENV } from "../config/env.js";
+
+// Load RSA keys
+const JWT_PRIVATE_KEY = fs.readFileSync(path.join(process.cwd(), "private.key"), "utf8");
+const JWT_PUBLIC_KEY = fs.readFileSync(path.join(process.cwd(), "public.key"), "utf8");
 
 // ── Token generation ──────────────────────────────────────────────────────────
 
 export const generateAccessToken = (userId) =>
   jwt.sign(
     { sub: userId, type: "access" },
-    JWT_ACCESS_SECRET,
-    { expiresIn: JWT_ACCESS_EXPIRES_IN || "15m" }
+    JWT_PRIVATE_KEY,
+    {
+      algorithm: "RS256",
+      expiresIn: JWT_ACCESS_EXPIRES_IN || "15m"
+    }
   );
-
 export const generateRefreshToken = (userId) =>
   jwt.sign(
     { sub: userId, type: "refresh" },
@@ -21,7 +29,7 @@ export const generateRefreshToken = (userId) =>
 // ── Token verification ────────────────────────────────────────────────────────
 
 export const verifyAccessToken = (token) =>
-  jwt.verify(token, JWT_ACCESS_SECRET);
+  jwt.verify(token, JWT_PUBLIC_KEY, { algorithms: ["RS256"] });
 
 export const verifyRefreshToken = (token) =>
   jwt.verify(token, JWT_REFRESH_SECRET);
