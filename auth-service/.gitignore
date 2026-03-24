@@ -62,3 +62,8 @@ temp/
 # local config
 config/local.json
 config/*.local.json
+
+
+
+private.key
+public.key
