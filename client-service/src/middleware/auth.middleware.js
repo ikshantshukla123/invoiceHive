@@ -1,4 +1,9 @@
 import jwt from "jsonwebtoken";
+import fs from "fs";
+import path from "path";
+
+// Load public key for verification
+const JWT_PUBLIC_KEY = fs.readFileSync(path.join(process.cwd(), "public.key"), "utf8");
 
 // ── protect ───────────────────────────────────────────────────────────────────
 // Each microservice verifies JWTs independently using the shared secret
@@ -14,7 +19,9 @@ export const protect = (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    const decoded = jwt.verify(token, JWT_PUBLIC_KEY, {
+    algorithms: ["RS256"]
+  });
 
     // Attach userId to req — controllers use req.userId to scope queries
     req.userId = decoded.sub;
