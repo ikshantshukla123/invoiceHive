@@ -1,0 +1,37 @@
+<h1>You got paid! 💸</h1>
+<p>Great news — a payment just landed for one of your invoices.</p>
+
+<div class="amount-block">
+  <div class="amount-label">Payment received</div>
+  <div class="amount-value">{{currency}} {{amount}}</div>
+</div>
+
+<div class="detail-row">
+  <span class="detail-label">From</span>
+  <span class="detail-value">{{clientName}}</span>
+</div>
+<div class="detail-row">
+  <span class="detail-label">Invoice</span>
+  <span class="detail-value">{{invoiceNumber}}</span>
+</div>
+<div class="detail-row">
+  <span class="detail-label">Paid on</span>
+  <span class="detail-value">{{paidAt}}</span>
+</div>
+<div class="detail-row">
+  <span class="detail-label">Method</span>
+  <span class="detail-value">
+    {{#if cardBrand}}{{cardBrand}} ending {{cardLast4}}{{else}}Online payment{{/if}}
+  </span>
+</div>
+<div class="detail-row" style="border-bottom: none;">
+  <span class="detail-label">Status</span>
+  <span class="badge badge-success">Paid</span>
+</div>
+
+<br/>
+<div class="tip-box">
+  Funds typically arrive in your bank account within 2–7 business days via Stripe.
+</div>
+
+<a href="{{dashboardUrl}}" class="btn">View Dashboard</a>

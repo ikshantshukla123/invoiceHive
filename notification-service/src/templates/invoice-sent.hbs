@@ -1,0 +1,43 @@
+<h1>You have a new invoice from {{fromName}}</h1>
+<p>Hi {{clientName}},</p>
+<p>
+  {{fromName}} has sent you an invoice for services rendered.
+  Please find the details below and the PDF attached to this email.
+</p>
+
+<div class="amount-block">
+  <div class="amount-label">Amount due</div>
+  <div class="amount-value">{{currency}} {{amount}}</div>
+</div>
+
+<div class="detail-row">
+  <span class="detail-label">Invoice number</span>
+  <span class="detail-value">{{invoiceNumber}}</span>
+</div>
+<div class="detail-row">
+  <span class="detail-label">Issued by</span>
+  <span class="detail-value">{{fromName}}</span>
+</div>
+<div class="detail-row">
+  <span class="detail-label">Due date</span>
+  <span class="detail-value" style="color: {{#if isOverdue}}#DC2626{{else}}#0F172A{{/if}}">
+    {{dueDate}}
+  </span>
+</div>
+
+<br/>
+{{#if paymentUrl}}
+  <a href="{{paymentUrl}}" class="btn">Pay Now — {{currency}} {{amount}}</a>
+  <p style="font-size: 13px; color: #64748B;">
+    Secure payment powered by Stripe. Your card details are never shared with {{fromName}}.
+  </p>
+{{/if}}
+
+{{#if pdfUrl}}
+  <a href="{{pdfUrl}}" class="btn btn-secondary">Download Invoice PDF</a>
+{{/if}}
+
+<hr class="divider"/>
+<p style="font-size: 13px; color: #64748B;">
+  Questions about this invoice? Contact {{fromName}} directly.
+</p>
