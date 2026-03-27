@@ -10,7 +10,7 @@ const start = async () => {
   await connectRabbitMQ();
 
   app.listen(PORT, () => {
-    console.log(`\n🚀 Payment Service running on port ${PORT}`);
+    console.log(`\nPayment Service running on port ${PORT}`);
     console.log(`   ENV: ${process.env.NODE_ENV || "development"}`);
     console.log(`   Webhook endpoint: POST http://localhost:${PORT}/payments/webhook\n`);
   });

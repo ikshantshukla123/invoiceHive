@@ -10,7 +10,7 @@ export const startOverdueCron = () => {
   // Cron syntax: "0 0 * * *" = at 00:00 every day
   // For testing, use "*/1 * * * *" (every minute)
   cron.schedule("0 0 * * *", async () => {
-    console.log(`[${new Date().toISOString()}] 🕛 Running overdue invoice check...`);
+    console.log(`[${new Date().toISOString()}]  Running overdue invoice check...`);
 
     try {
       const now = new Date();
@@ -22,11 +22,11 @@ export const startOverdueCron = () => {
       });
 
       if (overdueInvoices.length === 0) {
-        console.log("✅ No new overdue invoices found");
+        console.log(" No new overdue invoices found");
         return;
       }
 
-      console.log(`⚠️  Found ${overdueInvoices.length} overdue invoice(s) — processing...`);
+      console.log(`  Found ${overdueInvoices.length} overdue invoice(s) — processing...`);
 
       // Process in batches to avoid hammering the DB + RabbitMQ
       const BATCH_SIZE = 50;

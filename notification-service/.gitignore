@@ -1,0 +1,69 @@
+# dependencies
+node_modules/
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# coverage
+coverage/
+*.lcov
+
+# build output
+dist/
+build/
+.next/
+out/
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# cache
+.cache/
+.parcel-cache/
+
+# temporary files
+tmp/
+temp/
+
+# TypeScript
+*.tsbuildinfo
+
+# lock files (optional decision)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# misc
+*.tgz
+
+# local config
+config/local.json
+config/*.local.json
+
+
+
+/public.key
+/private.key
