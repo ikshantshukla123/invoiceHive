@@ -14,14 +14,14 @@ services:
       - invoicehive_net
 
 
-  # frontend:
-  #   build: ./client
-  #   environment:
-  #     - NEXT_PUBLIC_API_URL=http://localhost
-  #   depends_on:
-  #     - nginx
-  #   networks:
-  #     - invoicehive_net
+  frontend:
+    build: ./client
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost
+    depends_on:
+      - nginx
+    networks:
+      - invoicehive_net
 
 
   auth-service:
@@ -51,7 +51,7 @@ services:
 
       - MONGO_URI=${MONGO_URI}
 
-      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      
       - INTERNAL_SECRET=${INTERNAL_SECRET}
 
     networks:
@@ -65,7 +65,7 @@ services:
 
       - MONGO_URI=${MONGO_URI}
 
-      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+    
 
       - RABBITMQ_URL=amqp://rabbitmq:5672
 
@@ -94,8 +94,9 @@ services:
 
       - MONGO_URI=${MONGO_URI}
 
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+      - RAZORPAY_WEBHOOK_SECRET=${RAZORPAY_WEBHOOK_SECRET}
 
       - RABBITMQ_URL=amqp://rabbitmq:5672
 
