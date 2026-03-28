@@ -7,7 +7,7 @@ services:
       - NODE_ENV=development
       - PORT=3005
       - RABBITMQ_URL=amqp://rabbitmq:5672
-      - SMTP_HOST=${SMTP_HOST:-smtp.mailtrap.io}
+      - SMTP_HOST=${SMTP_HOST:-${SMTP_HOST}}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
