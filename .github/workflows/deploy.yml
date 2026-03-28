@@ -1,4 +1,4 @@
-name: Deploy — Build, Push & Deploy to EC2
+name: Deploy — Build, Push & Deploy to ORACLE
 
 # ── Only runs on merge to main (after CI passes) ─────────────────────────────
 on:
@@ -25,17 +25,17 @@ jobs:
       matrix:
         include:
           - service: auth-service
-            context: services/auth-service
+            context: auth-service
           - service: client-service
-            context: services/client-service
+            context: client-service
           - service: invoice-service
-            context: services/invoice-service
+            context: invoice-service
           - service: payment-service
-            context: services/payment-service
+            context: payment-service
           - service: notification-service
-            context: services/notification-service
+            context: notification-service
           - service: nginx
-            context: gateway/nginx
+            context: gateway
 
     steps:
       - name: Checkout code
@@ -74,7 +74,7 @@ jobs:
           cache-from: type=registry,ref=${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:buildcache
           cache-to:   type=registry,ref=${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:buildcache,mode=max
 
-  # ── Deploy to EC2 ──────────────────────────────────────────────────────────
+  # ── Deploy to ORACLE ──────────────────────────────────────────────────────────
   deploy:
     name: Deploy to server
     runs-on: ubuntu-latest
@@ -85,8 +85,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ── Copy docker-compose.prod.yml to EC2 ───────────────────────────────
-      - name: Copy compose file to EC2
+      # ── Copy docker-compose.prod.yml to ORACLE ───────────────────────────────
+      - name: Copy compose file to ORACLE
         uses: appleboy/scp-action@v0.1.7
         with:
           host:     ${{ secrets.EC2_HOST }}
@@ -141,9 +141,9 @@ jobs:
             http://${{ secrets.EC2_HOST }}/health)
 
           if [ "$response" = "200" ]; then
-            echo "✅ Gateway is healthy (HTTP $response)"
+            echo "Gateway is healthy (HTTP $response)"
           else
-            echo "❌ Gateway health check failed (HTTP $response)"
+            echo "Gateway health check failed (HTTP $response)"
             exit 1
           fi
 
@@ -151,7 +151,7 @@ jobs:
       - name: Notify on failure
         if: failure()
         run: |
-          echo "❌ Deploy failed for commit ${{ github.sha }}"
+          echo "Deploy failed for commit ${{ github.sha }}"
           echo "Branch: ${{ github.ref_name }}"
           echo "Triggered by: ${{ github.actor }}"
           # Add Slack/Discord webhook notification here if needed
