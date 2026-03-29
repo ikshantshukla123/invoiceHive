@@ -3,6 +3,7 @@ import { renderTemplate } from "./template.utils.js";
 
 const CLIENT_URL    = () => process.env.CLIENT_URL || "http://localhost:3000";
 const DASHBOARD_URL = () => `${CLIENT_URL()}/dashboard`;
+const API_URL       = () => process.env.API_URL || "http://localhost/api";
 
 // ── Format currency for display ───────────────────────────────────────────────
 const CURRENCY_SYMBOLS = {
@@ -44,6 +45,8 @@ export const sendInvoiceSentEmail = async (data) => {
   const {
     clientEmail, clientName, fromName,
     invoiceNumber, total, currency,
+    invoiceId,
+    invoiceId,
     dueDate, pdfUrl, paymentUrl,
   } = data;
 

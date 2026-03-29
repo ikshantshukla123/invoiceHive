@@ -39,7 +39,7 @@ router.delete("/:id", archiveClient);   // Soft delete — archives, doesn't des
 router.post("/:id/restore", restoreClient);
 
 // ── Contacts ──────────────────────────────────────────────────────────────────
-router.post(  "/:id/contacts/:contactId", validate(addContactSchema), addContact);
+router.post(  "/:id/contacts", validate(addContactSchema), addContact);
 router.delete("/:id/contacts/:contactId", removeContact);
 
 export default router;

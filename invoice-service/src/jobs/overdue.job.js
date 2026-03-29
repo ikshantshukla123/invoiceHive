@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import Invoice from "../models/invoice.model.js";
 import { publish } from "../config/rabbitmq.js";
+import { getPresignedUrl } from "../config/minio.js";
 
 // ── Runs every night at midnight ──────────────────────────────────────────────
 // Finds all sent/viewed invoices past their due date and marks them overdue
@@ -42,17 +43,18 @@ export const startOverdueCron = () => {
 
         // Fire events for each — Notification Service will send reminder emails
         for (const invoice of batch) {
-          await publish("invoice.overdue", {
-            invoiceId:     invoice._id.toString(),
-            invoiceNumber: invoice.invoiceNumber,
-            userId:        invoice.userId,
-            clientId:      invoice.clientId,
-            clientEmail:   invoice.toDetails?.email,
-            clientName:    invoice.toDetails?.name,
-            amount:        invoice.total,
-            currency:      invoice.currency,
-            dueDate:       invoice.dueDate,
-            pdfUrl:        invoice.pdfUrl,
+            const presignedPdfUrl = await getPresignedUrl(invoice.userId, invoice._id.toString());
+            await publish("invoice.overdue", {
+              invoiceId:     invoice._id.toString(),
+              invoiceNumber: invoice.invoiceNumber,
+              userId:        invoice.userId,
+              clientId:      invoice.clientId,
+              clientEmail:   invoice.toDetails?.email,
+              clientName:    invoice.toDetails?.name,
+              amount:        invoice.total,
+              currency:      invoice.currency,
+              dueDate:       invoice.dueDate,
+              pdfUrl:        presignedPdfUrl,
             paymentUrl:    invoice.razorpayPaymentLinkUrl,
             daysOverdue:   Math.floor((now - invoice.dueDate) / (1000 * 60 * 60 * 24)),
           });

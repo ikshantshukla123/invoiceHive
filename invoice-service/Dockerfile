@@ -28,8 +28,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Non-root user for security
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+#RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+#USER appuser
 
 EXPOSE 3003
 

@@ -14,37 +14,71 @@ services:
       - invoicehive_net
 
 
-  # frontend:
-  #   build: ./client
-  #   environment:
-  #     - NEXT_PUBLIC_API_URL=http://localhost
-  #   depends_on:
-  #     - nginx
-  #   networks:
-  #     - invoicehive_net
+  frontend:
+    build: 
+      context: ./client
+      target: deps
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- -H 0.0.0.0"
+    volumes:
+      - ./client:/app
+      - client_node_modules:/app/node_modules
+    env_file: ./client/.env
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost/api
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - nginx
+    networks:
+      - invoicehive_net
 
 
   auth-service:
-    build: ./auth-service
+    build: 
+      context: ./auth-service
+      target: deps
+    working_dir: /app
+    command: sh -c "npm install && npx nodemon -L src/index.js"
+    volumes:
+      - ./auth-service:/app
+      - auth_node_modules:/app/node_modules
+    env_file: ./auth-service/.env
     environment:
       - PORT=3001
       - NODE_ENV=development
-
+      - JWT_ACCESS_EXPIRES_IN=15m
+      - JWT_REFRESH_EXPIRES_IN=7d
       # atlas + upstash
       - MONGO_URI=${MONGO_URI}
       - REDIS_URL=${REDIS_URL}
 
       - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - COOKIE_SECRET=${COOKIE_SECRET}
 
-      - CLIENT_URL=http://localhost:3000
+      - CLIENT_URL=${CLIENT_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - GITHUB_CALLBACK_URL=${GITHUB_CALLBACK_URL}
 
     networks:
       - invoicehive_net
 
 
   client-service:
-    build: ./client-service
+    build: 
+      context: ./client-service
+      target: deps
+    working_dir: /app
+    command: sh -c "npm install && npx nodemon -L src/index.js"
+    volumes:
+      - ./client-service:/app
+      - client_svc_node_modules:/app/node_modules
+    env_file: ./client-service/.env
     environment:
       - PORT=3002
       - NODE_ENV=development
@@ -59,7 +93,15 @@ services:
 
 
   invoice-service:
-    build: ./invoice-service
+    build: 
+      context: ./invoice-service
+      target: runner
+    working_dir: /app
+    command: sh -c "npm install && npx nodemon -L src/index.js"
+    volumes:
+      - ./invoice-service:/app
+      - invoice_node_modules:/app/node_modules
+    env_file: ./invoice-service/.env
     environment:
       - PORT=3003
 
@@ -67,17 +109,21 @@ services:
 
     
 
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672
 
       - MINIO_ENDPOINT=minio
       - MINIO_PORT=9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin}
       - MINIO_BUCKET=invoicehive
+      - STORAGE_PUBLIC_URL=${STORAGE_PUBLIC_URL}
 
       - INTERNAL_SECRET=${INTERNAL_SECRET}
 
       - CLIENT_SERVICE_URL=http://client-service:3002
+
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
     depends_on:
       - rabbitmq
@@ -88,7 +134,15 @@ services:
 
 
   payment-service:
-    build: ./payment-service
+    build: 
+      context: ./payment-service
+      target: deps
+    working_dir: /app
+    command: sh -c "npm install && npx nodemon -L src/index.js"
+    volumes:
+      - ./payment-service:/app
+      - payment_node_modules:/app/node_modules
+    env_file: ./payment-service/.env
     environment:
       - PORT=3004
 
@@ -98,7 +152,7 @@ services:
       - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
       - RAZORPAY_WEBHOOK_SECRET=${RAZORPAY_WEBHOOK_SECRET}
 
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672
 
       - INTERNAL_SECRET=${INTERNAL_SECRET}
 
@@ -112,16 +166,26 @@ services:
 
 
   notification-service:
-    build: ./notification-service
+    build: 
+      context: ./notification-service
+      target: deps
+    working_dir: /app
+    command: sh -c "npm install && npx nodemon -L src/index.js"
+    volumes:
+      - ./notification-service:/app
+      - notification_node_modules:/app/node_modules
+    env_file: ./notification-service/.env
     environment:
       - PORT=3005
+      - API_URL=http://localhost/api
 
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672
 
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
+      - EMAIL_FROM=${EMAIL_FROM}
 
     depends_on:
       - rabbitmq
@@ -132,6 +196,9 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.12-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS:-guest}
     ports:
       - "15672:15672"
     networks:
@@ -143,8 +210,8 @@ services:
     command: server /data --console-address ":9001"
 
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY:-minioadmin}
 
     ports:
       - "9000:9000"
@@ -157,3 +224,12 @@ services:
 networks:
   invoicehive_net:
     driver: bridge
+
+volumes:
+  client_node_modules:
+  auth_node_modules:
+  client_svc_node_modules:
+  invoice_node_modules:
+  payment_node_modules:
+  notification_node_modules:
+

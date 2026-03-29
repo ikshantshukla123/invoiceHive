@@ -154,10 +154,13 @@ invoiceSchema.pre("save", function (next) {
 
 // ── Static: generate next invoice number for a user ───────────────────────────
 invoiceSchema.statics.generateInvoiceNumber = async function (userId) {
-  // Find the latest invoice for this user and increment
-  const latest = await this.findOne({ userId })
-    .sort({ createdAt: -1 })
-    .select("invoiceNumber")
+    // We must find the absolute highest numeric value, not just the latest created 
+    // (in case they were imported out of order)
+    const latest = await this.findOne({ 
+      userId, 
+      invoiceNumber: { $regex: /^INV-\d+$/ } 
+    })
+      .sort({ invoiceNumber: -1 })
     .lean();
 
   if (!latest?.invoiceNumber) return "INV-0001";

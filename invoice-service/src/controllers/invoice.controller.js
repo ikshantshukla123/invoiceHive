@@ -206,23 +206,25 @@ export const deleteInvoice = async (req, res, next) => {
       });
     }
 
-    if (invoice.status === "draft") {
-      await invoice.deleteOne();
-      return res.json({ success: true, message: "Invoice deleted" });
+    if (invoice.status === "draft" || invoice.status === "cancelled") {
+      await Invoice.findByIdAndDelete(invoice._id);
+      return res.json({ success: true, message: "Invoice deleted permanently" });
     }
 
     // For sent/viewed/overdue — cancel instead of delete
-    invoice.status = "cancelled";
-    await invoice.save();
+    if (["sent", "viewed", "overdue"].includes(invoice.status)) {
+      invoice.status = "cancelled";
+      await invoice.save();
 
-    await publish("invoice.cancelled", {
-      invoiceId: invoice._id,
-      userId:    invoice.userId,
-      clientId:  invoice.clientId,
-      total:     invoice.total,
-    });
+      await publish("invoice.cancelled", {
+        invoiceId: invoice._id,
+        userId:    invoice.userId,
+        clientId:  invoice.clientId,
+        total:     invoice.total,
+      });
 
-    res.json({ success: true, message: "Invoice cancelled" });
+      return res.json({ success: true, message: "Invoice cancelled" });
+    }
   } catch (err) {
     next(err);
   }
@@ -260,17 +262,18 @@ export const sendInvoice = async (req, res, next) => {
     await invoice.save();
 
     // ── 4. Publish event → Notification Service ───────
-    await publish("invoice.sent", {
-      invoiceId:     invoice._id.toString(),
-      invoiceNumber: invoice.invoiceNumber,
-      userId:        invoice.userId,
-      clientId:      invoice.clientId,
-      clientEmail:   invoice.toDetails.email,
-      clientName:    invoice.toDetails.name,
-      total:         invoice.total,
-      currency:      invoice.currency,
-      dueDate:       invoice.dueDate,
-      pdfUrl,
+const emailPdfUrl = await getPresignedUrl(invoice.userId, invoice._id.toString());
+      await publish("invoice.sent", {
+        invoiceId:     invoice._id.toString(),
+        invoiceNumber: invoice.invoiceNumber,
+        userId:        invoice.userId,
+        clientId:      invoice.clientId,
+        clientEmail:   invoice.toDetails.email,
+        clientName:    invoice.toDetails.name,
+        total:         invoice.total,
+        currency:      invoice.currency,
+        dueDate:       invoice.dueDate,
+        pdfUrl:        emailPdfUrl,
       paymentUrl:    invoice.razorpayPaymentLinkUrl,
       fromName:      invoice.fromDetails.name,
     });

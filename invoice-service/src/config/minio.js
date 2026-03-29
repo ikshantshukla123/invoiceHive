@@ -2,7 +2,7 @@ import { Client } from "minio";
 
 // ── MinIO client ──────────────────────────────────────────────────────────────
 export const minioClient = new Client({
-  endPoint:  process.env.MINIO_ENDPOINT  || "localhost",
+  endPoint:  process.env.MINIO_ENDPOINT  || "minio",
   port:      Number(process.env.MINIO_PORT) || 9000,
   useSSL:    process.env.MINIO_USE_SSL === "true",
   accessKey: process.env.MINIO_ACCESS_KEY || "minioadmin",
@@ -54,6 +54,21 @@ export const deletePDF = async (userId, invoiceId) => {
 // ── Generate presigned URL (for private download) ─────────────────────────────
 // Expires in 1 hour — use this for secure download links
 export const getPresignedUrl = async (userId, invoiceId) => {
+
   const objectName = `invoices/${userId}/${invoiceId}.pdf`;
-  return minioClient.presignedGetObject(BUCKET, objectName, 60 * 60); // 1hr expiry
+
+  const publicMinioClient = new Client({
+    endPoint: process.env.MINIO_PUBLIC_ENDPOINT || "localhost",
+    port: Number(process.env.MINIO_PORT) || 9000,
+    useSSL: process.env.MINIO_USE_SSL === "true",
+    accessKey: process.env.MINIO_ACCESS_KEY,
+    secretKey: process.env.MINIO_SECRET_KEY,
+    region: "us-east-1"
+  });
+
+  return publicMinioClient.presignedGetObject(
+    BUCKET,
+    objectName,
+    60 * 60
+  );
 };

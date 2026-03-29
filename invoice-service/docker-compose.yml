@@ -16,7 +16,7 @@ services:
       - MINIO_BUCKET=invoicehive
       - MINIO_USE_SSL=false
       - STORAGE_PUBLIC_URL=http://localhost:9000/invoicehive
-      - INTERNAL_SECRET=dev_internal_secret_change_in_prod
+      - INTERNAL_SECRET= dev_internal_secret_change_in_prod
       - CLIENT_SERVICE_URL=http://host.docker.internal:3002
       - CLIENT_URL=http://localhost:3000
       - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
