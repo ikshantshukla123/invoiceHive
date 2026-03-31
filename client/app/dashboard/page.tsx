@@ -45,7 +45,7 @@ export default function DashboardPage() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tighter text-on-background">
-            Welcome{user?.name ? `, ${user.name.split(" ")[0]}` : ""}
+            Good morning{user?.name ? `, ${user.name.split(" ")[0]}` : ""}
           </h1>
           <p className="text-on-surface-variant mt-1 text-sm">Here's your financial overview.</p>
         </div>

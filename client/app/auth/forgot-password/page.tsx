@@ -25,33 +25,20 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Left side: Image */}
-      <div className="hidden lg:block lg:w-1/2 relative bg-slate-100">
-        <img 
-          src="/auth.avif" 
-          alt="Authentication background" 
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-primary/10 mix-blend-multiply" />
-      </div>
-
-      {/* Right side: Form */}
-      <div className="w-full lg:w-1/2 flex flex-col">
-        <nav className="h-20 flex items-center justify-between px-8 md:px-12 w-full">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg primary-gradient flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white fill-white" />
-            </div>
-            <span className="text-xl font-headline font-bold text-on-surface tracking-tighter">InvoiceHive</span>
+    <div className="min-h-screen bg-surface flex flex-col">
+      <nav className="h-20 flex items-center justify-between px-8 md:px-12 fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg primary-gradient flex items-center justify-center">
+            <Zap className="w-4 h-4 text-white fill-white" />
           </div>
-          <Link href="/auth/login" className="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">
-            Back to login
-          </Link>
-        </nav>
+          <span className="text-xl font-headline font-bold text-on-surface tracking-tighter">InvoiceHive</span>
+        </div>
+        <Link href="/auth/login" className="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">Back to login</Link>
+      </nav>
 
-        <main className="flex-grow flex items-center justify-center px-6 py-12">
-          <div className="w-full max-w-[400px]">
+      <main className="flex-grow flex items-center justify-center px-6 pt-20 pb-12">
+        <div className="w-full max-w-[440px]">
+          <div className="card p-8 md:p-10 border border-outline-variant/10">
             {success ? (
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -61,7 +48,7 @@ export default function ForgotPasswordPage() {
                 <p className="text-on-surface-variant text-sm pb-4">
                   We've sent password reset instructions to your email address.
                 </p>
-                <Link href="/auth/login" className="w-full h-12 flex items-center justify-center gap-2 rounded-xl text-base font-bold text-white bg-[#3525cd] mt-4">
+                <Link href="/auth/login" className="btn-primary w-full h-12 justify-center text-base flex mt-4">
                   Return to login
                 </Link>
               </div>
@@ -81,7 +68,7 @@ export default function ForgotPasswordPage() {
                     <label className="input-label" htmlFor="email">Email Address</label>
                     <input id="email" name="email" type="email" placeholder="name@company.com" className="input-field h-12" required />
                   </div>
-                  <button type="submit" disabled={loading} className="w-full h-12 flex items-center justify-center gap-2 rounded-xl text-base font-bold text-white bg-[#3525cd] disabled:opacity-70">
+                  <button type="submit" disabled={loading} className="btn-primary w-full h-12 justify-center text-base">
                     {loading ? (
                       <span className="flex items-center gap-2">
                         <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -101,8 +88,8 @@ export default function ForgotPasswordPage() {
               </>
             )}
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

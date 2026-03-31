@@ -16,7 +16,6 @@ const FAQS = [
   { q: "How does InvoiceHive handle global tax compliance?", a: "We integrate directly with major tax providers to automatically calculate VAT, GST, and Sales Tax in real-time, ensuring compliant invoicing across 190+ jurisdictions." },
   { q: "Can we migrate from our existing ERP?", a: "Yes, we offer white-glove migration services and a robust API for synchronizing historical data from Oracle, SAP, and NetSuite." },
   { q: "What makes the ledger 'architectural'?", a: "It refers to our hierarchical data model that maps transactions to projects, departments, and entities with 100% auditability." },
-  { q: "Does InvoiceHive support multiple currencies?", a: "Absolutely. We support over 135 currencies with automated real-time exchange rates and localized payment portals for your international clients." },
 ];
 
 export default function LandingPage() {
@@ -26,11 +25,11 @@ export default function LandingPage() {
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white/80 backdrop-blur-md h-20 fixed top-0 w-full z-50">
+      <nav className="bg-white/80 backdrop-blur-md h-20 fixed top-0 w-full z-50 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 h-20">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg primary-gradient flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg primary-gradient flex items-center justify-center shadow-md">
                 <Zap className="w-4 h-4 text-white fill-white" />
               </div>
               <span className="text-xl font-bold text-slate-900 tracking-tighter font-headline">InvoiceHive</span>
@@ -43,13 +42,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             {loading ? (
-              <div className="w-24 h-8 bg-surface-container animate-pulse" />
+              <div className="w-24 h-8 bg-surface-container rounded animate-pulse" />
             ) : isAuthenticated ? (
-              <Link href="/dashboard" className="bg-[#3525cd] text-white font-bold text-sm px-6 py-3 hover:bg-[#2b1da8] transition-colors">Dashboard</Link>
+              <Link href="/dashboard" className="btn-primary shadow-lg shadow-primary/20 text-sm px-5 py-2.5">Dashboard</Link>
             ) : (
               <>
                 <Link href="/auth/login" className="text-slate-600 hover:text-primary transition-colors font-headline text-sm font-semibold">Sign In</Link>
-                <Link href="/auth/register" className="bg-[#3525cd] text-white font-bold text-sm px-6 py-3 hover:bg-[#2b1da8] transition-colors">Get Started</Link>
+                <Link href="/auth/register" className="btn-primary shadow-lg shadow-primary/20 text-sm px-5 py-2.5">Get Started</Link>
               </>
             )}
           </div>
@@ -75,15 +74,15 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 {isAuthenticated ? (
-                  <Link href="/dashboard" className="bg-[#3525cd] text-white font-bold text-lg px-10 py-4 hover:bg-[#2b1da8] transition-colors inline-flex justify-center items-center gap-2">
+                  <Link href="/dashboard" className="btn-primary text-lg px-8 py-4 shadow-2xl shadow-primary/30 hover:scale-[1.02]">
                     Go to Dashboard
                   </Link>
                 ) : (
-                  <Link href="/auth/register" className="bg-[#3525cd] text-white font-bold text-lg px-10 py-4 hover:bg-[#2b1da8] transition-colors inline-flex justify-center items-center gap-2">
+                  <Link href="/auth/register" className="btn-primary text-lg px-8 py-4 shadow-2xl shadow-primary/30 hover:scale-[1.02]">
                     Start Free Trial
                   </Link>
                 )}
-                <button className="bg-white text-slate-900 border border-slate-200 px-10 py-4 font-headline font-bold text-lg hover:bg-slate-50 transition-colors inline-flex justify-center items-center gap-2">
+                <button className="bg-surface-container-lowest text-on-background border border-outline-variant/20 px-8 py-4 rounded-xl font-headline font-bold text-lg hover:bg-surface-container-low transition-all">
                   Schedule Demo
                 </button>
               </div>
@@ -91,11 +90,11 @@ export default function LandingPage() {
 
             {/* Bento hero */}
             <div className="mt-24 grid grid-cols-12 gap-6">
-              <div className="col-span-12 md:col-span-8 bg-surface-container-lowest rounded-xl flex flex-col p-8 min-h-[360px]">
+              <div className="col-span-12 md:col-span-8 bg-surface-container-lowest rounded-xl shadow-sm flex flex-col p-8 min-h-[360px]">
                 <div className="flex justify-between items-end mb-8">
                   <div>
                     <p className="text-on-surface-variant text-sm font-medium mb-1">Global Revenue</p>
-                    <p className="font-mono text-4xl font-bold text-on-background tracking-tight">$1,8,392.00</p>
+                    <p className="font-mono text-4xl font-bold text-on-background tracking-tight">$1,248,392.00</p>
                   </div>
                   <span className="text-tertiary font-bold font-mono text-lg">+12.4%</span>
                 </div>
@@ -118,14 +117,14 @@ export default function LandingPage() {
                   <TrendingUp className="w-8 h-8 opacity-80" />
                   <div>
                     <p className="text-white/70 text-sm font-semibold mb-1">Total Collected</p>
-                    <p className="font-mono text-2xl font-bold">$84k</p>
+                    <p className="font-mono text-2xl font-bold">$842k</p>
                   </div>
                 </div>
                 <div className="bg-surface-container-highest p-8 rounded-xl flex flex-col justify-between" style={{minHeight:"160px"}}>
                   <Globe className="w-8 h-8 text-primary" />
                   <div>
                     <p className="text-on-surface-variant text-sm font-semibold mb-1">Active Regions</p>
-                    <p className="font-headline text-2xl font-bold text-on-background">4 Nations</p>
+                    <p className="font-headline text-2xl font-bold text-on-background">34 Nations</p>
                   </div>
                 </div>
               </div>
@@ -138,7 +137,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6">
             <p className="text-center text-on-surface-variant text-xs font-bold tracking-[0.2em] uppercase mb-10">Trusted by Global Leaders</p>
             <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-30">
-              {["RAZORPAY","SHOPIFY","VERCEL","LINEAR","NOTION"].map(name => (
+              {["STRIPE","SHOPIFY","VERCEL","LINEAR","NOTION"].map(name => (
                 <span key={name} className="font-headline font-bold text-xl tracking-tight text-slate-900">{name}</span>
               ))}
             </div>
@@ -178,91 +177,63 @@ export default function LandingPage() {
             <div className="absolute top-0 right-0 w-1/2 h-full bg-primary blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-1/3 h-full bg-secondary blur-[100px]" />
           </div>
-          <div className="max-w-7xl mx-auto px-4 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="max-w-2xl">
-                <h2 className="text-3xl font-bold font-headline mb-8 tracking-tight">The Architectural Ledger Philosophy</h2>
-                <p className="text-xl leading-relaxed mb-12" style={{color:"#e1e9f4"}}>
-                  Trust isn't built with heavy borders; it's built with precision. Our "Architectural Ledger" framework treats every financial transaction as a structural primitive—immutable, transparent, and effortlessly linked to your entire stack.
-                </p>
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <p className="font-mono text-sm mb-4" style={{color:"#c3c0ff"}}>01 // STRUCTURAL INTEGRITY</p>
-                    <p className="text-sm leading-relaxed" style={{color:"#e7effa"}}>Every invoice is a data point in a broader architectural map. We ensure that your finance stack is as solid as the buildings your team works in.</p>
-                  </div>
-                  <div>
-                    <p className="font-mono text-sm mb-4" style={{color:"#c3c0ff"}}>02 // TONAL DEPTH</p>
-                    <p className="text-sm leading-relaxed" style={{color:"#e7effa"}}>Our UI uses tonal layering over structural lines. This creates a focused environment where data flows without friction or visual noise.</p>
-                  </div>
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold font-headline mb-8 tracking-tight">The Architectural Ledger Philosophy</h2>
+              <p className="text-xl leading-relaxed mb-12" style={{color:"#e1e9f4"}}>
+                Trust isn't built with heavy borders; it's built with precision. Our "Architectural Ledger" framework treats every financial transaction as a structural primitive—immutable, transparent, and effortlessly linked to your entire stack.
+              </p>
+              <div className="grid md:grid-cols-2 gap-12">
+                <div>
+                  <p className="font-mono text-sm mb-4" style={{color:"#c3c0ff"}}>01 // STRUCTURAL INTEGRITY</p>
+                  <p className="text-sm leading-relaxed" style={{color:"#e7effa"}}>Every invoice is a data point in a broader architectural map. We ensure that your finance stack is as solid as the buildings your team works in.</p>
                 </div>
-              </div>
-              
-              <div className="relative w-full aspect-square md:aspect-video lg:aspect-square max-h-[400px]  overflow-hidden">
-                <img 
-                  src="/forget.jpg" 
-                  alt="Architectural Ledger" 
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-primary/20 mix-blend-overlay" />
+                <div>
+                  <p className="font-mono text-sm mb-4" style={{color:"#c3c0ff"}}>02 // TONAL DEPTH</p>
+                  <p className="text-sm leading-relaxed" style={{color:"#e7effa"}}>Our UI uses tonal layering over structural lines. This creates a focused environment where data flows without friction or visual noise.</p>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section className="py-32 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="py-32 bg-surface">
+          <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-center text-4xl font-extrabold font-headline tracking-tight mb-16 text-on-background">Frequently Asked Questions</h2>
-            
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              {/* Image on Left */}
-              <div className="relative w-full aspect-square md:aspect-[4/3] lg:aspect-auto lg:h-full min-h-[400px]">
-                <img 
-                  src="/faq.png" 
-                  alt="FAQ Illustration" 
-                  className="absolute inset-0 w-full h-full object-contain object-top"
-                />
-              </div>
-
-              {/* Questions on Right */}
-              <div className="space-y-4">
-                {FAQS.map(({q,a},i)=>(
-                  <div key={i} className="border border-outline-variant/30 cursor-pointer select-none transition-all duration-300" onClick={()=>setOpenFaq(openFaq===i?null:i)}>
-                    <div className="p-6">
-                      <div className="flex justify-between items-center gap-4">
-                        <h3 className="font-headline font-bold text-on-background">{q}</h3>
-                        <ChevronDown className={`w-5 h-5 text-primary flex-shrink-0 transition-transform duration-300 ${openFaq===i?"rotate-180":""}`} />
-                      </div>
-                      <div className={`grid transition-all duration-300 ease-in-out ${openFaq===i ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"}`}>
-                        <div className="overflow-hidden">
-                          <p className="text-on-surface-variant text-sm font-medium leading-relaxed">{a}</p>
-                        </div>
-                      </div>
+            <div className="space-y-4">
+              {FAQS.map(({q,a},i)=>(
+                <div key={i} className="card cursor-pointer select-none" onClick={()=>setOpenFaq(openFaq===i?null:i)}>
+                  <div className="p-6">
+                    <div className="flex justify-between items-center gap-4">
+                      <h3 className="font-headline font-bold text-on-background">{q}</h3>
+                      <ChevronDown className={`w-5 h-5 text-primary flex-shrink-0 transition-transform duration-200 ${openFaq===i?"rotate-180":""}`} />
                     </div>
+                    {openFaq===i && <p className="mt-4 text-on-surface-variant text-sm font-medium leading-relaxed">{a}</p>}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* CTA */}
         <section className="py-24 max-w-7xl mx-auto px-6">
-          <div className="rounded-3xl p-12 md:p-24 text-center text-white relative overflow-hidden" style={{background:"linear-gradient(135deg,#3525cd,#4f46e5)"}}>
+          <div className="rounded-3xl p-12 md:p-24 text-center text-white relative overflow-hidden shadow-2xl" style={{background:"linear-gradient(135deg,#3525cd,#4f46e5)"}}>
             <div className="relative z-10">
               <h2 className="text-4xl md:text-5xl font-extrabold font-headline mb-6 tracking-tight">Ready to evolve your finance stack?</h2>
               <p className="text-lg font-medium mb-12 max-w-xl mx-auto" style={{color:"#c3c0ff"}}>Join the new standard of enterprise billing. Start your 14-day premium trial today.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 {isAuthenticated ? (
-                  <Link href="/dashboard" className="bg-white text-[#3525cd] px-10 py-4 font-headline font-bold text-lg hover:bg-slate-100 transition-colors inline-flex justify-center items-center gap-2">
+                  <Link href="/dashboard" className="bg-white text-primary px-10 py-4 rounded-xl font-headline font-bold text-lg hover:scale-[1.05] transition-transform inline-flex items-center gap-2">
                     Go to Dashboard <ArrowRight className="w-5 h-5" />
                   </Link>
                 ) : (
-                  <Link href="/auth/register" className="bg-white text-[#3525cd] px-10 py-4 font-headline font-bold text-lg hover:bg-slate-100 transition-colors inline-flex justify-center items-center gap-2">
+                  <Link href="/auth/register" className="bg-white text-primary px-10 py-4 rounded-xl font-headline font-bold text-lg hover:scale-[1.05] transition-transform inline-flex items-center gap-2">
                     Get Started Now <ArrowRight className="w-5 h-5" />
                   </Link>
                 )}
-                <button className="px-10 py-4 font-headline font-bold text-lg border border-white/30 text-white hover:bg-white/10 transition-colors inline-flex justify-center items-center">
+                <button className="px-10 py-4 rounded-xl font-headline font-bold text-lg border border-white/20" style={{backgroundColor:"rgba(53,37,205,0.2)"}}>
                   Contact Sales
                 </button>
               </div>

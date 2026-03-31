@@ -47,13 +47,13 @@ export const renderTemplate = (templateName, context) => {
   // First render the content template
   const content = contentTemplate({
     ...context,
-    clientUrl: process.env.CLIENT_URL || "http://localhost",
+    clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
   });
 
   // Then inject content into the base layout
   return baseTemplate({
     ...context,
     content,
-    clientUrl: process.env.CLIENT_URL || "http://localhost",
+    clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
   });
 };
