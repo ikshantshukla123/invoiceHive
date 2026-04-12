@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -38,8 +38,8 @@ function Field({
   );
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
-export default function CreateInvoicePage() {
+// ── Form Content Component ────────────────────────────────────────────────────
+function InvoiceFormContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const { user }     = useAuth();
@@ -610,5 +610,18 @@ export default function CreateInvoicePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Main Page Export with Suspense ────────────────────────────────────────────
+export default function CreateInvoicePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <InvoiceFormContent />
+    </Suspense>
   );
 }
