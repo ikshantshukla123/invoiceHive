@@ -90,8 +90,8 @@ export const issueTokens = async (userId, res) => {
   // Set refresh token as httpOnly cookie — JS can't read it (XSS protection)
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure:   NODE_ENV === "production", // HTTPS only in prod
-    sameSite: "strict",
+    secure:   true, // MUST be true for SameSite=None
+    sameSite: "none", // MUST be none for cross-domain (Vercel -> Ngrok)
     maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days in ms
   });
 

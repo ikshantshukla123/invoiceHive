@@ -12,6 +12,9 @@ import passport from "./config/passport.js"; // registers strategies as side-eff
 
 const app = express();
 
+// Trust reverse proxy (Nginx) for Rate Limiting
+app.set("trust proxy", 1);
+
 // ── Security headers ──────────────────────────────────────────────────────────
 app.use(helmet());
 
