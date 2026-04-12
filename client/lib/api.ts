@@ -7,6 +7,9 @@ import Cookies from "js-cookie";
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost/api",
   withCredentials: true,
+  headers: {
+    "ngrok-skip-browser-warning": "69420",
+  },
 });
 
 /**
@@ -50,7 +53,10 @@ api.interceptors.response.use(
         const refreshRes = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL || "http://localhost/api"}/auth/refresh`,
           {},
-          { withCredentials: true }
+          { 
+            withCredentials: true,
+            headers: { "ngrok-skip-browser-warning": "69420" }
+          }
         );
 
         accessToken = refreshRes.data.accessToken || refreshRes.data.token;
