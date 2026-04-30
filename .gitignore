@@ -34,3 +34,4 @@ data/
 # ── Test coverage ─────────────────────────────────────────────────────────────
 coverage/
 .nyc_output/
+.env.prod
