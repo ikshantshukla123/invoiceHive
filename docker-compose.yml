@@ -40,7 +40,6 @@ services:
     build:
       context: ./auth-service
     working_dir: /app
-    env_file: ./auth-service/.env
     environment:
       - PORT=3001
       - NODE_ENV=production
@@ -66,7 +65,6 @@ services:
     build:
       context: ./client-service
     working_dir: /app
-    env_file: ./client-service/.env
     environment:
       - PORT=3002
       - NODE_ENV=production
@@ -80,7 +78,6 @@ services:
     build:
       context: ./invoice-service
     working_dir: /app
-    env_file: ./invoice-service/.env
     environment:
       - PORT=3003
       - NODE_ENV=production
@@ -103,7 +100,6 @@ services:
     build:
       context: ./payment-service
     working_dir: /app
-    env_file: ./payment-service/.env
     environment:
       - PORT=3004
       - NODE_ENV=production
@@ -122,7 +118,6 @@ services:
     build:
       context: ./notification-service
     working_dir: /app
-    env_file: ./notification-service/.env
     environment:
       - PORT=3005
       - NODE_ENV=production
