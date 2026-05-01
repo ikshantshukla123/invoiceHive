@@ -1,4 +1,4 @@
-name: Deploy — Build, Push & Deploy to ORACLE
+name: Deploy to EC2
 
 # ── Only runs on merge to main (after CI passes) ─────────────────────────────
 on:
@@ -10,89 +10,25 @@ concurrency:
   group: production-deploy
   cancel-in-progress: false  # Never cancel a running deploy — finish it first
 
-env:
-  REGISTRY: docker.io
-  IMAGE_PREFIX: ${{ secrets.DOCKER_USERNAME }}/invoicehive
-
 jobs:
-  # ── Build and push all Docker images ───────────────────────────────────────
-  build-and-push:
-    name: Build & Push (${{ matrix.service }})
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - service: auth-service
-            context: auth-service
-          - service: client-service
-            context: client-service
-          - service: invoice-service
-            context: invoice-service
-          - service: payment-service
-            context: payment-service
-          - service: notification-service
-            context: notification-service
-          - service: nginx
-            context: gateway
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # ── Docker Buildx — multi-platform builds, better caching ──────────────
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # ── Login to Docker Hub ────────────────────────────────────────────────
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # ── Extract metadata (tags, labels) ───────────────────────────────────
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_PREFIX }}-${{ matrix.service }}
-          tags: |
-            type=sha,prefix=,format=short
-            type=raw,value=latest
-
-      # ── Build and push with layer caching ─────────────────────────────────
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context:   ${{ matrix.context }}
-          push:      true
-          tags:      ${{ steps.meta.outputs.tags }}
-          labels:    ${{ steps.meta.outputs.labels }}
-          # Cache layers in Docker Hub — massively speeds up subsequent builds
-          cache-from: type=registry,ref=${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:buildcache
-          cache-to:   type=registry,ref=${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:buildcache,mode=max
-
-  # ── Deploy to ORACLE ──────────────────────────────────────────────────────────
+  # ── Deploy to EC2 ──────────────────────────────────────────────────────────
   deploy:
     name: Deploy to server
     runs-on: ubuntu-latest
-    needs: build-and-push  # Only runs if all builds succeeded
     environment: production  # Requires manual approval if configured
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ── Copy docker-compose.prod.yml to ORACLE ───────────────────────────────
-      - name: Copy compose file to ORACLE
+      # ── Copy docker-compose.yml to EC2 ───────────────────────────────────────
+      - name: Copy compose file to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host:     ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key:      ${{ secrets.EC2_SSH_KEY }}
-          source:   "docker-compose.prod.yml,.env.example"
+          source:   "docker-compose.yml,.env.example"
           target:   "/home/${{ secrets.EC2_USER }}/invoicehive"
 
       # ── SSH into EC2 and deploy ────────────────────────────────────────────
@@ -107,26 +43,84 @@ jobs:
 
             cd /home/${{ secrets.EC2_USER }}/invoicehive
 
-            echo "🔑 Logging into Docker Hub..."
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+            # ── Create/update .env with all environment variables ─────
+            cat > .env <<EOF
+            # ── Deployment Configuration ──────────────────────────────
+            NODE_ENV=production
+            CLIENT_URL=https://${{ secrets.APP_DOMAIN }}
+            API_URL=https://${{ secrets.API_DOMAIN }}
+            SERVER_NAME=${{ secrets.API_DOMAIN }} ${{ secrets.APP_DOMAIN }}
+            ALLOWED_ORIGIN_1=https://${{ secrets.APP_DOMAIN }}
+            ALLOWED_ORIGIN_2=https://www.${{ secrets.APP_DOMAIN }}
+            ALLOWED_ORIGIN_3=https://${{ secrets.API_DOMAIN }}
 
-            echo "📥 Pulling latest images..."
-            docker compose -f docker-compose.prod.yml pull
+            # ── Database & Cache (Cloud Services) ──────────────────────
+            MONGO_URI=${{ secrets.MONGO_URI }}
+            REDIS_URL=${{ secrets.REDIS_URL }}
 
-            echo "🔄 Restarting services with zero-downtime rolling update..."
-            # Update services one at a time to avoid full downtime
-            docker compose -f docker-compose.prod.yml up -d \
-              --remove-orphans \
-              --no-build
+            # ── JWT & Authentication ──────────────────────────────────
+            JWT_ACCESS_EXPIRES_IN=15m
+            JWT_REFRESH_EXPIRES_IN=7d
+            JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }}
+            JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+            COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}
 
-            echo "⏳ Waiting for health checks..."
-            sleep 15
+            # ── Service-to-Service Communication ──────────────────────
+            INTERNAL_SECRET=${{ secrets.INTERNAL_SECRET }}
 
-            echo "🏥 Checking service health..."
-            docker compose -f docker-compose.prod.yml ps
+            # ── OAuth - Google ──────────────────────────────────────
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            GOOGLE_CALLBACK_URL=https://${{ secrets.API_DOMAIN }}/api/auth/oauth/google/callback
+
+            # ── OAuth - GitHub ──────────────────────────────────────
+            GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }}
+            GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }}
+            GITHUB_CALLBACK_URL=https://${{ secrets.API_DOMAIN }}/api/auth/oauth/github/callback
+
+            # ── Email (SMTP) ────────────────────────────────────────
+            SMTP_HOST=${{ secrets.SMTP_HOST }}
+            SMTP_PORT=${{ secrets.SMTP_PORT }}
+            SMTP_USER=${{ secrets.SMTP_USER }}
+            SMTP_PASS=${{ secrets.SMTP_PASS }}
+            EMAIL_FROM=${{ secrets.EMAIL_FROM }}
+
+            # ── AWS S3 (Object Storage) ──────────────────────────────
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
+            STORAGE_PUBLIC_URL=${{ secrets.STORAGE_PUBLIC_URL }}
+
+            # ── RabbitMQ ─────────────────────────────────────────────
+            RABBITMQ_USER=${{ secrets.RABBITMQ_USER }}
+            RABBITMQ_PASS=${{ secrets.RABBITMQ_PASS }}
+
+            # ── Razorpay (Payment Gateway) ───────────────────────────
+            RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }}
+            RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}
+            RAZORPAY_WEBHOOK_SECRET=${{ secrets.RAZORPAY_WEBHOOK_SECRET }}
+            EOF
+
+            echo "✓ .env file created with all secrets"
+
+            echo "🔄 Pulling git updates..."
+            git pull origin main
+
+            echo "🛑 Stopping old services..."
+            docker compose down 2>/dev/null || true
+
+            echo "🏗️ Building images and starting services..."
+            docker compose up -d --build
+
+            echo "⏳ Waiting for services to initialize..."
+            sleep 30
+
+            echo "🏥 Checking service status..."
+            docker compose ps
 
             echo "🧹 Cleaning up old images..."
-            docker image prune -f
+            docker image prune -f --force
 
             echo "✅ Deploy complete!"
 
@@ -154,4 +148,3 @@ jobs:
           echo "Deploy failed for commit ${{ github.sha }}"
           echo "Branch: ${{ github.ref_name }}"
           echo "Triggered by: ${{ github.actor }}"
-          # Add Slack/Discord webhook notification here if needed
