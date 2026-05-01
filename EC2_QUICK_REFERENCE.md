@@ -3,7 +3,7 @@
 ## Your Configuration
 
 ```
-EC2_HOST          = 35.153.135.242
+EC2_HOST          = 32.192.92.236
 EC2_USER          = ubuntu
 EC2_SSH_KEY       = invoiceHive.pem
 API_DOMAIN        = api.ikshant.me
@@ -29,7 +29,7 @@ Expected to complete in 3-5 minutes.
 ## Step 2: Get SSL Certificate (After setup completes)
 
 ```bash
-ssh -i invoiceHive.pem ubuntu@35.153.135.242
+ssh -i invoiceHive.pem ubuntu@32.192.92.236
 
 # Get certificate for both domains
 sudo certbot certonly --standalone \
@@ -53,7 +53,7 @@ sudo ls -la /etc/letsencrypt/live/ikshant.me/
 
 | Secret | Value | Source |
 |--------|-------|--------|
-| EC2_HOST | 35.153.135.242 | Your IP |
+| EC2_HOST | 32.192.92.236 | Your IP |
 | EC2_USER | ubuntu | Default |
 | EC2_SSH_KEY | (pem file contents) | invoiceHive.pem |
 | DOCKER_USERNAME | your_username | Docker Hub |
@@ -95,7 +95,7 @@ sudo ls -la /etc/letsencrypt/live/ikshant.me/
 cd ~/Downloads/"untitled folder"/invoiceHive
 
 git add .
-git commit -m "prod: deploy to 35.153.135.242 with api.ikshant.me"
+git commit -m "prod: deploy to 32.192.92.236 with api.ikshant.me"
 git push origin main
 
 # Watch deployment:
@@ -124,7 +124,7 @@ curl https://api.ikshant.me/health/payments
 
 ```bash
 # SSH into EC2
-ssh -i invoiceHive.pem ubuntu@35.153.135.242
+ssh -i invoiceHive.pem ubuntu@32.192.92.236
 
 # Check services running
 docker-compose -f docker-compose.prod.yml ps
