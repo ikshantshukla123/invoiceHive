@@ -22,7 +22,6 @@ services:
     networks:
       - invoicehive_net
 
-
   frontend:
     build:
       context: ./client
@@ -36,7 +35,6 @@ services:
     restart: always
     networks:
       - invoicehive_net
-
 
   auth-service:
     build:
@@ -57,13 +55,12 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
-      - GITHUB_CLIENT_ID=${HUB_CLIENT_ID}
-      - GITHUB_CLIENT_SECRET=${HUB_CLIENT_SECRET}
-      - GITHUB_CALLBACK_URL=${HUB_CALLBACK_URL}
+      - HUB_CLIENT_ID=${HUB_CLIENT_ID}
+      - HUB_CLIENT_SECRET=${HUB_CLIENT_SECRET}
+      - HUB_CALLBACK_URL=${HUB_CALLBACK_URL}
     restart: always
     networks:
       - invoicehive_net
-
 
   client-service:
     build:
@@ -78,7 +75,6 @@ services:
     restart: always
     networks:
       - invoicehive_net
-
 
   invoice-service:
     build:
@@ -103,7 +99,6 @@ services:
     networks:
       - invoicehive_net
 
-
   payment-service:
     build:
       context: ./payment-service
@@ -122,7 +117,6 @@ services:
     restart: always
     networks:
       - invoicehive_net
-
 
   notification-service:
     build:
@@ -143,7 +137,6 @@ services:
     networks:
       - invoicehive_net
 
-
   rabbitmq:
     image: rabbitmq:3.12-management
     environment:
@@ -152,7 +145,6 @@ services:
     restart: always
     networks:
       - invoicehive_net
-
 
 networks:
   invoicehive_net:

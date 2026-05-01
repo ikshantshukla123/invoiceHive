@@ -8,7 +8,6 @@ RUN npm ci --only=production
 FROM node:20-alpine AS runner
 
 # Install Chromium + required fonts for Puppeteer
-# This is the critical step — without this Puppeteer has no browser to launch
 RUN apk add --no-cache \
     chromium \
     nss \
@@ -18,18 +17,17 @@ RUN apk add --no-cache \
     ttf-freefont \
     font-noto-emoji
 
-# Tell Puppeteer to use the installed Chromium instead of downloading its own
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
+COPY keys/auth-public.key ./public.key
 COPY . .
 
-# Non-root user for security
-#RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-#USER appuser
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 
 EXPOSE 3003
 
