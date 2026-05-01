@@ -10,6 +10,8 @@
     "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1039.0",
+    "@aws-sdk/s3-request-presigner": "^3.1039.0",
     "amqplib": "^0.10.4",
     "axios": "^1.13.6",
     "cors": "^2.8.5",

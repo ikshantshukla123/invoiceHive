@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import Invoice from "../models/invoice.model.js";
 import { publish } from "../config/rabbitmq.js";
-import { getPresignedUrl } from "../config/minio.js";
+import { getPresignedUrl } from "../config/s3.js";
 
 // ── Runs every night at midnight ──────────────────────────────────────────────
 // Finds all sent/viewed invoices past their due date and marks them overdue

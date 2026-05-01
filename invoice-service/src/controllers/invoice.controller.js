@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import axios from "axios";
 import Invoice from "../models/invoice.model.js";
 import { generateInvoicePDF } from "../utils/pdf.utils.js";
-import { uploadPDF, getPresignedUrl } from "../config/minio.js";
+import { uploadPDF, getPresignedUrl } from "../config/s3.js";
 import { publish } from "../config/rabbitmq.js";
 
 // ── POST /invoices ────────────────────────────────────────────────────────────

@@ -74,9 +74,9 @@ jobs:
             GOOGLE_CALLBACK_URL=https://${{ secrets.API_DOMAIN }}/api/auth/oauth/google/callback
 
             # ── OAuth - GitHub ──────────────────────────────────────
-            GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }}
-            GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }}
-            GITHUB_CALLBACK_URL=https://${{ secrets.API_DOMAIN }}/api/auth/oauth/github/callback
+            HUB_CLIENT_ID=${{ secrets.HUB_CLIENT_ID }}
+            HUB_CLIENT_SECRET=${{ secrets.HUB_CLIENT_SECRET }}
+            HUB_CALLBACK_URL=https://${{ secrets.API_DOMAIN }}/api/auth/oauth/github/callback
 
             # ── Email (SMTP) ────────────────────────────────────────
             SMTP_HOST=${{ secrets.SMTP_HOST }}

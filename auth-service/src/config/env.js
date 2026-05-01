@@ -1,6 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+// Map HUB_* to GITHUB_* (since GitHub is reserved in GitHub Actions)
+const GITHUB_CLIENT_ID = process.env.HUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.HUB_CLIENT_SECRET;
+const GITHUB_CALLBACK_URL = process.env.HUB_CALLBACK_URL;
 
 export const {
     PORT,
@@ -10,9 +14,6 @@ export const {
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
     GOOGLE_CALLBACK_URL,
-    GITHUB_CLIENT_ID,
-    GITHUB_CLIENT_SECRET,
-    GITHUB_CALLBACK_URL,
     REDIS_URL,
     NODE_ENV,
     CLIENT_URL,
@@ -28,4 +29,10 @@ export const {
     JWT_REFRESH_SECRET,
     JWT_ACCESS_EXPIRES_IN,
     JWT_REFRESH_EXPIRES_IN,
-} = process.env;    
+} = process.env;
+
+export {
+    GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET,
+    GITHUB_CALLBACK_URL,
+};    

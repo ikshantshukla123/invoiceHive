@@ -25,8 +25,8 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CALLBACK_URL=http://localhost:3001/auth/oauth/google/callback
 
-      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
-      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - GITHUB_CLIENT_ID=${HUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${HUB_CLIENT_SECRET}
       - GITHUB_CALLBACK_URL=http://localhost:3001/auth/oauth/github/callback
 
       - CLIENT_URL=http://localhost:3000

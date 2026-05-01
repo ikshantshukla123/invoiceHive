@@ -2,7 +2,7 @@ import "dotenv/config";
 import app from "./app.js";
 import { connectDB } from "./config/db.js";
 import { connectRabbitMQ } from "./config/rabbitmq.js";
-import { initMinio } from "./config/minio.js";
+import { initS3 } from "./config/s3.js";
 import { startOverdueCron } from "./jobs/overdue.job.js";
 
 const PORT = process.env.PORT || 3003;
@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3003;
 const start = async () => {
   await connectDB();
   await connectRabbitMQ();
-  await initMinio();
+  await initS3();
 
   // Start nightly overdue detection cron
   startOverdueCron();

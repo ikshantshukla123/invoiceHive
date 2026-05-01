@@ -9,6 +9,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      # Domain and origins - should be overridden per environment
+      - SERVER_NAME=${API_DOMAIN} ${APP_DOMAIN}
+      - ALLOWED_ORIGIN_1=https://${APP_DOMAIN}
+      - ALLOWED_ORIGIN_2=https://www.${APP_DOMAIN}
+      - ALLOWED_ORIGIN_3=https://${API_DOMAIN}
     volumes:
       # SSL certificates from Certbot
       - /etc/letsencrypt:/etc/letsencrypt:ro
